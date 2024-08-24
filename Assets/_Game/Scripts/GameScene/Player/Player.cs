@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class Player : MonoBehaviour, IDamageable
@@ -28,13 +29,14 @@ public class Player : MonoBehaviour, IDamageable
     public int Ammo => _ammo;
 
     private float[] _positions = { -2.5f, 0f, 2.5f };
-    private int _currentLine = 1;
+    public int CurrentLine = 1;
     public float _moveSpeed;
 
     private float _keyPressDelay = 0.05f;
     private float _timeSinceLastKeyPress = 0f;
     private bool _isWaitingForInput = false;
     private KeyCode _lastKeyPressed;
+    private bool _invincible;
 
     public float BonusDamage;
 
@@ -132,10 +134,7 @@ public class Player : MonoBehaviour, IDamageable
                     _ammo--;
                     OnBulletsChanged?.Invoke(_ammo);
                 }
-                else
-                {
-                    Debug.Log("Cannot shoot while moving!");
-                }
+
                 return;
             }
         }
@@ -149,6 +148,7 @@ public class Player : MonoBehaviour, IDamageable
     {
         Projectile projectile = Instantiate(_projectilePrefab, _shootTransform.position, Quaternion.identity);
         projectile.Init(transform, _infoTemplate.Damage + BonusDamage);
+        AudioManager.Instance.Play(SoundType.PlayerShoot);
     }
 
     private void ExecuteMove()
@@ -167,43 +167,70 @@ public class Player : MonoBehaviour, IDamageable
 
     private void MoveLeft()
     {
-        if (_currentLine > 0)
+        if (CurrentLine > 0)
         {
-            _currentLine--;
-            _isMoving = true;
+            MoveToLine(CurrentLine - 1);
         }
     }
 
     private void MoveRight()
     {
-        if (_currentLine < _positions.Length - 1)
+        if (CurrentLine < _positions.Length - 1)
         {
-            _currentLine++;
-            _isMoving = true;
+            MoveToLine(CurrentLine + 1);
         }
+    }
+
+    public void MoveToLine(int lineIndex)
+    {
+        CurrentLine = lineIndex;
+        _isMoving = true;
     }
 
     private void LateUpdate()
     {
-        Vector3 targetPosition = new(_positions[_currentLine], transform.position.y, transform.position.z);
-        transform.position = Vector3.MoveTowards(transform.position, targetPosition, _moveSpeed * Time.deltaTime);
-
-        if (transform.position == targetPosition)
+        Vector3 targetPosition = new(_positions[CurrentLine], transform.position.y, transform.position.z);
+        if (transform.position != targetPosition)
         {
+            if (!AudioManager.Instance.IsPlaying(SoundType.PlayerSwapLane))
+            {
+                AudioManager.Instance.Play(SoundType.PlayerSwapLane);
+            }
+
+            transform.position = Vector3.MoveTowards(transform.position, targetPosition, _moveSpeed * Time.deltaTime);
+        }
+        else
+        {
+            AudioManager.Instance.Stop(SoundType.PlayerSwapLane);
             _isMoving = false;
         }
     }
 
     public void Damage(float damage)
     {
+        if (_invincible)
+        {
+            return;
+        }
+
+        StartCoroutine(Invincibility());
+
         if (_shield)
         {
             Shield = false;
+            AudioManager.Instance.Play(SoundType.ShieldBreak);
         }
         else
         {
             _health.DealDamage(damage);
         }
+    }
+
+    private IEnumerator Invincibility()
+    {
+        _invincible = true;
+        yield return new WaitForSeconds(1);
+        _invincible = false;
     }
 
     public void IncreaseShield()

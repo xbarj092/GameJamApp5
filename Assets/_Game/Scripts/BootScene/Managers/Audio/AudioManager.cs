@@ -1,5 +1,4 @@
 using System;
-using System.Threading;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -13,11 +12,13 @@ public class AudioManager : MonoSingleton<AudioManager>
 
     void Awake()
     {
-        foreach (Sound s in sounds) {
-            for(int i = 0; i < s.NumberOfSource; i++) { 
+        foreach (Sound s in sounds)
+        {
+            for(int i = 0; i < s.NumberOfSource; i++)
+            { 
                 AudioSource source = gameObject.AddComponent<AudioSource>();
                 source.playOnAwake = false;
-                source.loop = s.name == SoundType.Ambience || s.name == SoundType.Menu;
+                source.loop = s.name == SoundType.GameAmbience || s.name == SoundType.MenuAmbience;
                 source.clip = s.clip;
                 source.volume = s.volume;
                 source.pitch = s.pitch;
@@ -28,11 +29,14 @@ public class AudioManager : MonoSingleton<AudioManager>
         }
     }
 
-    public void Play(SoundType name) {
+    public void Play(SoundType name)
+    {
+        Debug.Log("Playing audio - " + name);
         Sound s = Array.Find(sounds, sound => sound.name == name);
         bool find = false;
 
-        AudioSource foundSource = s.source.Find((source) => {
+        AudioSource foundSource = s.source.Find((source) => 
+        {
             find = !source.isPlaying;
             return find;
         });
@@ -53,7 +57,8 @@ public class AudioManager : MonoSingleton<AudioManager>
         s.source.ForEach((source) => source.Stop());
     }
 
-    public bool IsPlaying(SoundType name) { 
+    public bool IsPlaying(SoundType name)
+    { 
         Sound s = Array.Find(sounds, sound => sound.name == name);
         return s.source.Exists((source) => source.isPlaying);
     }

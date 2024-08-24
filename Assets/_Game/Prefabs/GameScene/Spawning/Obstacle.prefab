@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: -3605081684572173056}
   m_Layer: 0
   m_Name: Obstacle
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -120,7 +120,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.44549432}
+  m_Offset: {x: -0.000000014901161, y: -0.44549432}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -131,7 +131,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.811615, y: 0.10901135}
+  m_Size: {x: 0.6232816, y: 0.10901135}
   m_EdgeRadius: 0
 --- !u!114 &-3605081684572173056
 MonoBehaviour:
@@ -156,9 +156,10 @@ GameObject:
   m_Component:
   - component: {fileID: 2357399902450135779}
   - component: {fileID: 1292782127801606762}
+  - component: {fileID: 4857457236705668230}
   m_Layer: 0
   m_Name: SideColliderR
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -207,7 +208,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -223,6 +224,19 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &4857457236705668230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4143728293191581428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21c42d1c10fa98044955c4250df27ff2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _left: 0
 --- !u!1 &6842703867976366761
 GameObject:
   m_ObjectHideFlags: 0
@@ -233,9 +247,10 @@ GameObject:
   m_Component:
   - component: {fileID: 2612365002505232840}
   - component: {fileID: 1311248963248268385}
+  - component: {fileID: 1262425142442067551}
   m_Layer: 0
   m_Name: SideColliderL
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -300,3 +315,16 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &1262425142442067551
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6842703867976366761}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21c42d1c10fa98044955c4250df27ff2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _left: 1

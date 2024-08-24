@@ -67,27 +67,27 @@ public class SceneLoadManager : MonoSingleton<SceneLoadManager>
 
     private void PlayMenuMusic()
     {
-        if (AudioManager.Instance.IsPlaying(SoundType.Ambience))
+        if (AudioManager.Instance.IsPlaying(SoundType.GameAmbience))
         {
-            AudioManager.Instance.Stop(SoundType.Ambience);
+            AudioManager.Instance.Stop(SoundType.GameAmbience);
         }
         
-        if (!AudioManager.Instance.IsPlaying(SoundType.Menu))
+        if (!AudioManager.Instance.IsPlaying(SoundType.MenuAmbience))
         {
-            AudioManager.Instance.Play(SoundType.Menu);
+            AudioManager.Instance.Play(SoundType.MenuAmbience);
         }
     }
 
     private void PlayAmbience()
     {
-        if (AudioManager.Instance.IsPlaying(SoundType.Menu))
+        if (AudioManager.Instance.IsPlaying(SoundType.MenuAmbience))
         {
-            AudioManager.Instance.Stop(SoundType.Menu);
+            AudioManager.Instance.Stop(SoundType.MenuAmbience);
         }
 
-        if (!AudioManager.Instance.IsPlaying(SoundType.Ambience))
+        if (!AudioManager.Instance.IsPlaying(SoundType.GameAmbience))
         {
-            AudioManager.Instance.Play(SoundType.Ambience);
+            AudioManager.Instance.Play(SoundType.GameAmbience);
         }
     }
 }

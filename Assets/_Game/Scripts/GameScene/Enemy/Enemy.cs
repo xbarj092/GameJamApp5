@@ -6,24 +6,33 @@ public class Enemy : MonoBehaviour, IDamageable
     [SerializeField] private Transform _shootTransform;
     [SerializeField] private Projectile _projectilePrefab;
     private float[] _positions = { -2.5f, 0f, 2.5f };
+    private int _currentLine;
+    private int _nextLine;
+
     [SerializeField] private EntityInfo _infoTemplate;
     public EntityInfo Info => _infoTemplate;
 
     private Health _health;
     private SpriteRenderer _renderer;
+    private Player _player;
 
     public event Action<Enemy> OnEnemyKilled;
 
-    private Vector3 _targetPosition;
+    private Vector3 _targetPosition = Vector3.zero;
     private float _moveSpeed;
     private float _shootInterval = 0.5f;
     private float _nextShootTime;
     private bool _isMoving;
 
+    private bool _isDescending = true;
+    private float _targetYPosition = 3f;
+    private float _descentSpeed = 2f;
+
     private void Awake()
     {
         _health = GetComponent<Health>();
         _renderer = GetComponent<SpriteRenderer>();
+        _player = FindObjectOfType<Player>();
     }
 
     private void OnEnable()
@@ -35,7 +44,6 @@ public class Enemy : MonoBehaviour, IDamageable
         _health.OnDamage.AddListener(OnDamage);
         _health.OnDeath.AddListener(Death);
 
-        SetNextTargetPosition();
         _nextShootTime = Time.time + _shootInterval;
     }
 
@@ -47,6 +55,17 @@ public class Enemy : MonoBehaviour, IDamageable
 
     private void Update()
     {
+        if (_isDescending)
+        {
+            Descend();
+            return;
+        }
+        
+        if (_targetPosition == Vector3.zero)
+        {
+            SetNextTargetPosition();
+        }
+
         Move();
 
         if (_isMoving)
@@ -54,16 +73,28 @@ public class Enemy : MonoBehaviour, IDamageable
             return;
         }
 
-        if (Time.time >= _nextShootTime)
+        if (Time.time >= _nextShootTime && _currentLine == _player.CurrentLine)
         {
             Shoot();
             _nextShootTime = Time.time + UnityEngine.Random.Range(0.5f, 1.5f);
         }
     }
 
+    private void Descend()
+    {
+        Vector3 currentPosition = transform.position;
+        Vector3 targetPosition = new(currentPosition.x, _targetYPosition, currentPosition.z);
+        transform.position = Vector3.Lerp(currentPosition, targetPosition, _descentSpeed * Time.deltaTime);
+        if (Mathf.Abs(transform.position.y - _targetYPosition) < 0.01f)
+        {
+            _isDescending = false;
+        }
+    }
+
     private void SetNextTargetPosition()
     {
-        float nextPosition = _positions[UnityEngine.Random.Range(0, _positions.Length)];
+        _nextLine = UnityEngine.Random.Range(0, _positions.Length);
+        float nextPosition = _positions[_nextLine];
         _targetPosition = new Vector3(nextPosition, transform.position.y, transform.position.z);
         _isMoving = true;
     }
@@ -72,10 +103,17 @@ public class Enemy : MonoBehaviour, IDamageable
     {
         if (_isMoving)
         {
-            transform.position = Vector3.MoveTowards(transform.position, _targetPosition, _moveSpeed * Time.deltaTime);
-            if (Vector3.Distance(transform.position, _targetPosition) < 0.1f)
+            if (!AudioManager.Instance.IsPlaying(SoundType.EnemySwapLane))
             {
+                AudioManager.Instance.Play(SoundType.EnemySwapLane);
+            }
+
+            transform.position = Vector3.MoveTowards(transform.position, _targetPosition, _moveSpeed * Time.deltaTime);
+            if (Vector3.Distance(transform.position, _targetPosition) < 0.01f)
+            {
+                AudioManager.Instance.Stop(SoundType.EnemySwapLane);
                 _isMoving = false;
+                _currentLine = _nextLine;
                 Invoke(nameof(SetNextTargetPosition), UnityEngine.Random.Range(1f, 3f));
             }
         }
@@ -85,11 +123,14 @@ public class Enemy : MonoBehaviour, IDamageable
     {
         Projectile projectile = Instantiate(_projectilePrefab, _shootTransform.position, Quaternion.identity);
         projectile.Init(transform, _infoTemplate.Damage);
+        AudioManager.Instance.Play(SoundType.EnemyShoot);
     }
 
     public void Damage(float damage)
     {
         _health.DealDamage(damage);
+        AudioManager.Instance.Stop(SoundType.PlayerHitBullet);
+        AudioManager.Instance.Play(SoundType.EnemyHit);
     }
 
     public void OnDamage(float damage)

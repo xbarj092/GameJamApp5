@@ -2,13 +2,11 @@ using UnityEngine;
 
 public class PickupableItem : MonoBehaviour
 {
-    [SerializeField] private float _moveSpeed = 2f;
-
     private IPickupable _pickupableStrategy;
 
     private void Update()
     {
-        transform.Translate(_moveSpeed * Time.deltaTime * Vector3.down);
+        transform.Translate(GameManager.Instance.MovementSpeed() * Time.deltaTime * Vector3.down);
         if (transform.position.y < -10f)
         {
             Destroy(gameObject);

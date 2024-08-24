@@ -47,8 +47,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sounds:
   - name: 1
-    clip: {fileID: 8300000, guid: 117beb16e94f4e64ab5d9afa3b289462, type: 3}
-    volume: 1
+    clip: {fileID: 8300000, guid: c648bc506a344da4f812070959e386f2, type: 3}
+    volume: 0.5
     pitch: 1
     SpatialBlend: 0
     NumberOfSource: 1
@@ -102,8 +102,50 @@ MonoBehaviour:
     SpatialBlend: 0
     NumberOfSource: 1
     source: []
+  - name: 9
+    clip: {fileID: 8300000, guid: c648bc506a344da4f812070959e386f2, type: 3}
+    volume: 0.5
+    pitch: 1
+    SpatialBlend: 0
+    NumberOfSource: 1
+    source: []
+  - name: 10
+    clip: {fileID: 8300000, guid: c648bc506a344da4f812070959e386f2, type: 3}
+    volume: 0.5
+    pitch: 1
+    SpatialBlend: 0
+    NumberOfSource: 1
+    source: []
+  - name: 11
+    clip: {fileID: 8300000, guid: c648bc506a344da4f812070959e386f2, type: 3}
+    volume: 0.5
+    pitch: 1
+    SpatialBlend: 0
+    NumberOfSource: 1
+    source: []
+  - name: 12
+    clip: {fileID: 8300000, guid: c648bc506a344da4f812070959e386f2, type: 3}
+    volume: 0.5
+    pitch: 1
+    SpatialBlend: 0
+    NumberOfSource: 1
+    source: []
+  - name: 13
+    clip: {fileID: 8300000, guid: c648bc506a344da4f812070959e386f2, type: 3}
+    volume: 0.5
+    pitch: 1
+    SpatialBlend: 0
+    NumberOfSource: 1
+    source: []
+  - name: 14
+    clip: {fileID: 8300000, guid: c648bc506a344da4f812070959e386f2, type: 3}
+    volume: 0.5
+    pitch: 1
+    SpatialBlend: 0
+    NumberOfSource: 1
+    source: []
   SpacialBlend: 0
-  mixer: {fileID: 0}
+  mixer: {fileID: 24300002, guid: eecf4d498ff5bcd4599d5743ca19f24e, type: 2}
   Muted: 0
 --- !u!82 &1932182813274503733
 AudioSource:
@@ -114,7 +156,7 @@ AudioSource:
   m_GameObject: {fileID: 492718982613567401}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 24300002, guid: 4eb9e298dab092a428fdaa23f8ba613b, type: 2}
+  OutputAudioMixerGroup: {fileID: 24300002, guid: eecf4d498ff5bcd4599d5743ca19f24e, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
@@ -234,6 +276,7 @@ Transform:
   - {fileID: 6526047943729715749}
   - {fileID: 7877868939910395927}
   - {fileID: 279774544649580783}
+  - {fileID: 7846987396792855676}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4301000126956545055
@@ -281,6 +324,50 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <ActiveGameScreen>k__BackingField: {fileID: 0}
+--- !u!1 &5620571612243248105
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7846987396792855676}
+  - component: {fileID: 990246691921425928}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7846987396792855676
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5620571612243248105}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1079557810082613088}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &990246691921425928
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5620571612243248105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12cbc622f4407d64d836e02b24564e88, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8673023924183636132
 GameObject:
   m_ObjectHideFlags: 0

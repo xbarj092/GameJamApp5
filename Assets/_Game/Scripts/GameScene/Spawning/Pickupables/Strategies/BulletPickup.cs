@@ -10,5 +10,6 @@ public class BulletPickup : IPickupable
     public void ApplyEffect(Player player)
     {
         player.AddAmmo(_bulletAmount);
+        AudioManager.Instance.Play(SoundType.BulletPickup);
     }
 }

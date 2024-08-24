@@ -1,4 +1,7 @@
+using AYellowpaper.SerializedCollections;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Spawner : MonoBehaviour
@@ -7,7 +10,7 @@ public class Spawner : MonoBehaviour
     [SerializeField] private float _spawnInterval = 1f;
 
     [Header("Obstacles")]
-    [SerializeField] private GameObject _obstaclePrefab;
+    [SerializeField] private Obstacle _obstaclePrefab;
     [SerializeField][Range(0f, 1f)] private float _spawnChance = 1f;
 
     [Header("Pickupables")]
@@ -15,7 +18,9 @@ public class Spawner : MonoBehaviour
     [SerializeField] private PickupableItem _hpPickupPrefab;
     [SerializeField] private PickupableItem _bulletPickupPrefab;
 
-    [SerializeField][Range(0f, 1f)] private float _pickupSpawnChance = 0.6f;
+    [SerializeField][Range(0f, 1f)] private float _pickupSpawnChance = 0.0f;
+
+    [SerializeField] private SerializedDictionary<int, int> _spawnRateMultiplierThresholds = new();
 
     private Player _player;
 
@@ -33,6 +38,14 @@ public class Spawner : MonoBehaviour
     {
         while (true)
         {
+            foreach (KeyValuePair<int, int> threshold in _spawnRateMultiplierThresholds)
+            {
+                if (GameManager.Instance.SecondsPassed >= threshold.Key)
+                {
+                    _spawnInterval = Random.Range(1f, 3f) * threshold.Value;
+                }
+            }
+
             yield return new WaitForSeconds(_spawnInterval);
             if (Random.value <= _spawnChance)
             {
@@ -52,8 +65,16 @@ public class Spawner : MonoBehaviour
     {
         float spawnPositionX = _positions[Random.Range(0, _positions.Length)];
         Vector3 spawnPosition = new(spawnPositionX, transform.position.y, transform.position.z);
-        GameObject obstacle = Instantiate(_obstaclePrefab, spawnPosition, Quaternion.identity);
-        obstacle.transform.localScale = new(2, Mathf.CeilToInt(Random.Range(1, 5)), 1);
+        Obstacle obstacle = Instantiate(_obstaclePrefab, spawnPosition, Quaternion.identity);
+        obstacle.transform.localScale = new Vector3(2, Mathf.CeilToInt(Random.Range(1, 5)), 1);
+        Vector2 obstacleSize = new(obstacle.transform.localScale.x + 2, obstacle.transform.localScale.y + 4);
+        Collider2D[] collidersInRange = Physics2D.OverlapBoxAll(spawnPosition, obstacleSize, 0f);
+        bool hasOverlapWithOtherObstacles = collidersInRange.Where(collider => collider.CompareTag("Obstacle") && 
+            !collider.transform.IsChildOf(obstacle.transform)).Any();
+        if (hasOverlapWithOtherObstacles)
+        {
+            Destroy(obstacle.gameObject);
+        }
     }
 
     private void SpawnRandomPickup()

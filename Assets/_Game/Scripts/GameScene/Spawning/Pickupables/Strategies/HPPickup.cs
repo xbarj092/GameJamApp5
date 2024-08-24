@@ -10,5 +10,6 @@ public class HpPickup : IPickupable
     public void ApplyEffect(Player player)
     {
         player.RestoreHealth(_healthAmount);
+        AudioManager.Instance.Play(SoundType.HPPickup);
     }
 }
