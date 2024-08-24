@@ -222,6 +222,7 @@ public class Player : MonoBehaviour, IDamageable
         }
         else
         {
+            AudioManager.Instance.Play(SoundType.PlayerHitBullet);
             _health.DealDamage(damage);
         }
     }

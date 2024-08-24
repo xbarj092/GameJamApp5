@@ -129,7 +129,6 @@ public class Enemy : MonoBehaviour, IDamageable
     public void Damage(float damage)
     {
         _health.DealDamage(damage);
-        AudioManager.Instance.Stop(SoundType.PlayerHitBullet);
         AudioManager.Instance.Play(SoundType.EnemyHit);
     }
 

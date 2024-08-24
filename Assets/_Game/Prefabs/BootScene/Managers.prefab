@@ -47,78 +47,78 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sounds:
   - name: 1
-    clip: {fileID: 8300000, guid: c648bc506a344da4f812070959e386f2, type: 3}
+    clip: {fileID: 8300000, guid: f16b525f26626654fbae54bb4f417318, type: 3}
     volume: 0.5
     pitch: 1
     SpatialBlend: 0
     NumberOfSource: 1
     source: []
   - name: 2
-    clip: {fileID: 8300000, guid: 244e5f90c03e3ce478eb3677f1d6388f, type: 3}
-    volume: 0.1
-    pitch: 1
+    clip: {fileID: 8300000, guid: 988217776e53be44baaf0f7c03cc6bbf, type: 3}
+    volume: 0.5
+    pitch: 0.9
     SpatialBlend: 0
     NumberOfSource: 3
     source: []
   - name: 3
-    clip: {fileID: 8300000, guid: 0bd48507985aed642b93f828b4a9b3bd, type: 3}
+    clip: {fileID: 8300000, guid: 5077c1a392a60af4aa3a9a07121db864, type: 3}
     volume: 0.5
-    pitch: 0.8
+    pitch: 1
     SpatialBlend: 0
     NumberOfSource: 1
     source: []
   - name: 4
-    clip: {fileID: 8300000, guid: 0bd48507985aed642b93f828b4a9b3bd, type: 3}
+    clip: {fileID: 8300000, guid: 988217776e53be44baaf0f7c03cc6bbf, type: 3}
+    volume: 0.5
+    pitch: 1.2
+    SpatialBlend: 0
+    NumberOfSource: 2
+    source: []
+  - name: 5
+    clip: {fileID: 8300000, guid: 3abb2b64caba8e1458eda576b3cb1aec, type: 3}
     volume: 0.5
     pitch: 1
     SpatialBlend: 0
     NumberOfSource: 1
     source: []
-  - name: 5
-    clip: {fileID: 8300000, guid: a9f40037208f95748bbfda4ee9235061, type: 3}
+  - name: 6
+    clip: {fileID: 8300000, guid: 2973f6535bcd95a41ad60b1f2e076be4, type: 3}
     volume: 0.1
     pitch: 1
     SpatialBlend: 0
-    NumberOfSource: 10
-    source: []
-  - name: 6
-    clip: {fileID: 8300000, guid: 7dd515e6f97125847a15b0c12f2725fe, type: 3}
-    volume: 0.3
-    pitch: 1
-    SpatialBlend: 0
-    NumberOfSource: 10
+    NumberOfSource: 1
     source: []
   - name: 7
-    clip: {fileID: 8300000, guid: c4e90844ba44cad4ba1dcf19bce0b6ed, type: 3}
-    volume: 0.05
+    clip: {fileID: 8300000, guid: 0a295f0eaa3371f48861100e0c48b99b, type: 3}
+    volume: 0.5
     pitch: 1
     SpatialBlend: 0
     NumberOfSource: 1
     source: []
   - name: 8
-    clip: {fileID: 8300000, guid: c648bc506a344da4f812070959e386f2, type: 3}
-    volume: 0.5
+    clip: {fileID: 8300000, guid: 2098b6e968191c6498a958a06c27ddd8, type: 3}
+    volume: 0.2
     pitch: 1
     SpatialBlend: 0
-    NumberOfSource: 1
+    NumberOfSource: 5
     source: []
   - name: 9
-    clip: {fileID: 8300000, guid: c648bc506a344da4f812070959e386f2, type: 3}
-    volume: 0.5
+    clip: {fileID: 8300000, guid: 2098b6e968191c6498a958a06c27ddd8, type: 3}
+    volume: 0.2
     pitch: 1
     SpatialBlend: 0
-    NumberOfSource: 1
+    NumberOfSource: 5
     source: []
   - name: 10
-    clip: {fileID: 8300000, guid: c648bc506a344da4f812070959e386f2, type: 3}
-    volume: 0.5
+    clip: {fileID: 8300000, guid: 1583e23387640f140bc1fb31f0f3b985, type: 3}
+    volume: 0.3
     pitch: 1
     SpatialBlend: 0
     NumberOfSource: 1
     source: []
   - name: 11
-    clip: {fileID: 8300000, guid: c648bc506a344da4f812070959e386f2, type: 3}
-    volume: 0.5
+    clip: {fileID: 8300000, guid: e3dc1f44acdd97b498b24e339876b62d, type: 3}
+    volume: 0.2
     pitch: 1
     SpatialBlend: 0
     NumberOfSource: 1
@@ -138,7 +138,7 @@ MonoBehaviour:
     NumberOfSource: 1
     source: []
   - name: 14
-    clip: {fileID: 8300000, guid: c648bc506a344da4f812070959e386f2, type: 3}
+    clip: {fileID: 8300000, guid: 704039a104e53be4fa5fc44d7041ab76, type: 3}
     volume: 0.5
     pitch: 1
     SpatialBlend: 0

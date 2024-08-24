@@ -32,7 +32,6 @@ public class Projectile : MonoBehaviour
         if (_holder != null && collision.transform != _holder && collision.TryGetComponent(out IDamageable damageable))
         {
             damageable.Damage(_damage);
-            AudioManager.Instance.Play(SoundType.PlayerHitBullet);
             _rb.velocity = Vector2.zero;
             _rb.simulated = false;
             _renderer.enabled = false;
