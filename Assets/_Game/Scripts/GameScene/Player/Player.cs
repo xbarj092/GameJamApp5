@@ -1,23 +1,98 @@
+using System;
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour
+public class Player : MonoBehaviour, IDamageable
 {
     [SerializeField] private Projectile _projectilePrefab;
     [SerializeField] private Transform _shootTransform;
+    [SerializeField] private EntityInfo _infoTemplate;
+    public EntityInfo Info => _infoTemplate;
+
+    private Health _health;
+
+    private bool _shield = false;
+    public bool Shield
+    {
+        get => _shield;
+        set
+        {
+            if (value != _shield)
+            {
+                _shield = value;
+                OnShieldStateChanged?.Invoke(value);
+            }
+        }
+    }
+
+    private int _ammo = 10;
+    public int Ammo => _ammo;
 
     private float[] _positions = { -2.5f, 0f, 2.5f };
     private int _currentLine = 1;
-    public float _moveSpeed = 20f;
+    public float _moveSpeed;
 
-    private float _keyPressDelay = 0.1f;
+    private float _keyPressDelay = 0.05f;
     private float _timeSinceLastKeyPress = 0f;
     private bool _isWaitingForInput = false;
     private KeyCode _lastKeyPressed;
 
     public float BonusDamage;
-    public float BaseDamage = 10;
 
     private bool _isMoving = false;
+
+    public event Action<float> OnHealthChanged;
+    public event Action<bool> OnShieldStateChanged;
+    public event Action<int> OnBulletsChanged;
+
+    private void Awake()
+    {
+        _health = GetComponent<Health>();
+    }
+
+    private void OnEnable()
+    {
+        _health.SetMaxHealth(_infoTemplate.Health);
+        _moveSpeed = _infoTemplate.Speed;
+
+        _health.OnDamage.AddListener(OnDamage);
+        _health.OnHeal.AddListener(OnHeal);
+        _health.OnDeath.AddListener(Death);
+    }
+
+    private void OnDisable()
+    {
+        _health.OnDamage.RemoveListener(OnDamage);
+        _health.OnHeal.RemoveListener(OnHeal);
+        _health.OnDeath.RemoveListener(Death);
+    }
+
+    public float CurrentHealth()
+    {
+        return _health.CurrHealth;
+    }
+
+    private void OnHeal(float damage)
+    {
+        OnHealthChanged?.Invoke(_health.MaxHealth - damage);
+    }
+
+    private void OnDamage(float damage)
+    {
+        if (_shield)
+        {
+            Shield = false;
+        }
+        else
+        {
+            OnHealthChanged?.Invoke(_health.MaxHealth - damage);
+        }
+    }
+
+    public void Death()
+    {
+        ScreenEvents.OnGameScreenOpenedInvoke(GameScreenType.GameOver);
+        Destroy(gameObject);
+    }
 
     private void Update()
     {
@@ -51,9 +126,11 @@ public class PlayerMovement : MonoBehaviour
                 _isWaitingForInput = false;
                 _timeSinceLastKeyPress = 0f;
 
-                if (!_isMoving)
+                if (!_isMoving && _ammo > 0)
                 {
                     Shoot();
+                    _ammo--;
+                    OnBulletsChanged?.Invoke(_ammo);
                 }
                 else
                 {
@@ -71,7 +148,7 @@ public class PlayerMovement : MonoBehaviour
     private void Shoot()
     {
         Projectile projectile = Instantiate(_projectilePrefab, _shootTransform.position, Quaternion.identity);
-        projectile.Init(BaseDamage + BonusDamage);
+        projectile.Init(transform, _infoTemplate.Damage + BonusDamage);
     }
 
     private void ExecuteMove()
@@ -115,5 +192,33 @@ public class PlayerMovement : MonoBehaviour
         {
             _isMoving = false;
         }
+    }
+
+    public void Damage(float damage)
+    {
+        if (_shield)
+        {
+            Shield = false;
+        }
+        else
+        {
+            _health.DealDamage(damage);
+        }
+    }
+
+    public void IncreaseShield()
+    {
+        Shield = true;
+    }
+
+    public void RestoreHealth(int amount)
+    {
+        _health.Heal(amount);
+    }
+
+    public void AddAmmo(int amount)
+    {
+        _ammo += amount;
+        OnBulletsChanged?.Invoke(_ammo);
     }
 }
