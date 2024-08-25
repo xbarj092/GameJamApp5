@@ -48,7 +48,7 @@ GameObject:
   - component: {fileID: 1135860309308490518}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -111,7 +111,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 3
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.9019608, g: 0.8235294, b: 0.11764706, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -136,6 +136,7 @@ MonoBehaviour:
   _projectilePrefab: {fileID: 907479665835829871, guid: 2d9c23a8b735b3e4a8b0466ddedcddfa, type: 3}
   _shootTransform: {fileID: 7628917527533457232}
   _infoTemplate: {fileID: 11400000, guid: e6a3f9751545da447aa6ee53e757fb36, type: 2}
+  CurrentLine: 1
   _moveSpeed: 20
   BonusDamage: 0
 --- !u!114 &5114736581682438877
@@ -162,7 +163,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 114e4b17c14912a49b0387b0396757e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <OnHealthChange>k__BackingField:
+  <OnHeal>k__BackingField:
+    m_PersistentCalls:
+      m_Calls: []
+  <OnDamage>k__BackingField:
     m_PersistentCalls:
       m_Calls: []
   <OnMaxHealthChange>k__BackingField:

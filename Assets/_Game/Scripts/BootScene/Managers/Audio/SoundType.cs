@@ -12,7 +12,5 @@ public enum SoundType
     EnemyShoot = 9,
     GameAmbience = 10,
     MenuAmbience = 11,
-    PlayerSwapLane = 12,
-    EnemySwapLane = 13,
-    ShieldBreak = 14
+    ShieldBreak = 12
 }

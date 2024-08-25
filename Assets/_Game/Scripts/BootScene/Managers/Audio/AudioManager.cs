@@ -31,7 +31,6 @@ public class AudioManager : MonoSingleton<AudioManager>
 
     public void Play(SoundType name)
     {
-        Debug.Log("Playing audio - " + name);
         Sound s = Array.Find(sounds, sound => sound.name == name);
         bool find = false;
 

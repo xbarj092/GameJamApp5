@@ -23,6 +23,7 @@ public class SceneLoadManager : MonoSingleton<SceneLoadManager>
 
     public void GoMenuToGame()
     {
+        GameManager.Instance.ResetStats();
         SceneLoader.OnSceneLoadDone += OnMenuToGameLoadDone;
         SceneLoader.LoadScene(SceneLoader.Scenes.GameScene, toUnload: SceneLoader.Scenes.MenuScene);
     }
@@ -49,6 +50,7 @@ public class SceneLoadManager : MonoSingleton<SceneLoadManager>
 
     public void RestartGame()
     {
+        GameManager.Instance.ResetStats();
         SceneLoader.OnSceneLoadDone += OnRestartGameDone;
         SceneLoader.LoadScene(SceneLoader.Scenes.GameScene, toUnload: SceneLoader.Scenes.GameScene);
     }

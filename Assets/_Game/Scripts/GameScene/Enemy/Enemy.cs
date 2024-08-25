@@ -103,15 +103,9 @@ public class Enemy : MonoBehaviour, IDamageable
     {
         if (_isMoving)
         {
-            if (!AudioManager.Instance.IsPlaying(SoundType.EnemySwapLane))
-            {
-                AudioManager.Instance.Play(SoundType.EnemySwapLane);
-            }
-
             transform.position = Vector3.MoveTowards(transform.position, _targetPosition, _moveSpeed * Time.deltaTime);
             if (Vector3.Distance(transform.position, _targetPosition) < 0.01f)
             {
-                AudioManager.Instance.Stop(SoundType.EnemySwapLane);
                 _isMoving = false;
                 _currentLine = _nextLine;
                 Invoke(nameof(SetNextTargetPosition), UnityEngine.Random.Range(1f, 3f));
@@ -139,6 +133,7 @@ public class Enemy : MonoBehaviour, IDamageable
 
     public void Death()
     {
+        GameManager.Instance.Score += 10;
         OnEnemyKilled?.Invoke(this);
         Destroy(gameObject);
     }

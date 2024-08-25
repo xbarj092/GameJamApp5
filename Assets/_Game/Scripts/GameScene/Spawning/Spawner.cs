@@ -29,6 +29,28 @@ public class Spawner : MonoBehaviour
         _player = FindObjectOfType<Player>();
     }
 
+    private void OnEnable()
+    {
+        GameEvents.OnBossEnemySpawned += OnBossSpawned;
+        GameEvents.OnBossEnemyKilled += OnBossKilled;
+    }
+
+    private void OnDisable()
+    {
+        GameEvents.OnBossEnemySpawned -= OnBossSpawned;
+        GameEvents.OnBossEnemyKilled -= OnBossKilled;
+    }
+
+    private void OnBossSpawned(BossEnemy enemy)
+    {
+        _pickupSpawnChance = 1f;
+    }
+
+    private void OnBossKilled(BossEnemy enemy)
+    {
+        _pickupSpawnChance = 0.6f;
+    }
+
     private void Start()
     {
         StartCoroutine(SpawnRoutine());
@@ -116,7 +138,7 @@ public class Spawner : MonoBehaviour
     private void SpawnPickup(PickupableItem prefab, IPickupable pickupStrategy)
     {
         float spawnPositionX = _positions[Random.Range(0, _positions.Length)];
-        Vector3 spawnPosition = new(spawnPositionX, transform.position.y, transform.position.z);
+        Vector3 spawnPosition = new(spawnPositionX, transform.position.y, -0.1f);
         PickupableItem pickup = Instantiate(prefab, spawnPosition, Quaternion.identity);
         pickup.SetPickupable(pickupStrategy);
     }

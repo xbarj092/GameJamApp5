@@ -124,22 +124,8 @@ MonoBehaviour:
     NumberOfSource: 1
     source: []
   - name: 12
-    clip: {fileID: 8300000, guid: c648bc506a344da4f812070959e386f2, type: 3}
-    volume: 0.5
-    pitch: 1
-    SpatialBlend: 0
-    NumberOfSource: 1
-    source: []
-  - name: 13
-    clip: {fileID: 8300000, guid: c648bc506a344da4f812070959e386f2, type: 3}
-    volume: 0.5
-    pitch: 1
-    SpatialBlend: 0
-    NumberOfSource: 1
-    source: []
-  - name: 14
     clip: {fileID: 8300000, guid: 704039a104e53be4fa5fc44d7041ab76, type: 3}
-    volume: 0.5
+    volume: 0.2
     pitch: 1
     SpatialBlend: 0
     NumberOfSource: 1

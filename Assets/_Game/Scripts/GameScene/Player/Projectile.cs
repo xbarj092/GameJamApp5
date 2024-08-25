@@ -7,6 +7,7 @@ public class Projectile : MonoBehaviour
     [SerializeField] private SpriteRenderer _renderer;
 
     private Transform _holder;
+    [SerializeField] private bool _enemy; 
     private float _damage;
 
     public void Init(Transform holder, float damage)
@@ -23,13 +24,13 @@ public class Projectile : MonoBehaviour
     {
         if (_holder != null)
         {
-            _rb.velocity = 2.5f * GameManager.Instance.MovementSpeed() * _holder.up;
+            _rb.velocity = 2.5f * GameManager.Instance.MovementSpeed() * (_enemy ? -_holder.up : _holder.up);
         }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (_holder != null && collision.transform != _holder && collision.TryGetComponent(out IDamageable damageable))
+        if (_holder != null && !_holder.CompareTag(collision.transform.tag) && collision.TryGetComponent(out IDamageable damageable))
         {
             damageable.Damage(_damage);
             _rb.velocity = Vector2.zero;

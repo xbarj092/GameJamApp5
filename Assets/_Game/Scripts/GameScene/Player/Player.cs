@@ -92,6 +92,7 @@ public class Player : MonoBehaviour, IDamageable
 
     public void Death()
     {
+        Time.timeScale = 0;
         ScreenEvents.OnGameScreenOpenedInvoke(GameScreenType.GameOver);
         Destroy(gameObject);
     }
@@ -183,8 +184,11 @@ public class Player : MonoBehaviour, IDamageable
 
     public void MoveToLine(int lineIndex)
     {
-        CurrentLine = lineIndex;
-        _isMoving = true;
+        if (lineIndex >= 0 && lineIndex < _positions.Length)
+        {
+            CurrentLine = lineIndex;
+            _isMoving = true;
+        }
     }
 
     private void LateUpdate()
@@ -192,16 +196,10 @@ public class Player : MonoBehaviour, IDamageable
         Vector3 targetPosition = new(_positions[CurrentLine], transform.position.y, transform.position.z);
         if (transform.position != targetPosition)
         {
-            if (!AudioManager.Instance.IsPlaying(SoundType.PlayerSwapLane))
-            {
-                AudioManager.Instance.Play(SoundType.PlayerSwapLane);
-            }
-
             transform.position = Vector3.MoveTowards(transform.position, targetPosition, _moveSpeed * Time.deltaTime);
         }
         else
         {
-            AudioManager.Instance.Stop(SoundType.PlayerSwapLane);
             _isMoving = false;
         }
     }
