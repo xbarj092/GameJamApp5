@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3391b25e628de3b408cb3ff2d539a497, type: 3}
   m_Name: BossEnemy
   m_EditorClassIdentifier: 
-  <Speed>k__BackingField: 30
-  <Health>k__BackingField: 500
+  <Speed>k__BackingField: 10
+  <Health>k__BackingField: 250
   <Damage>k__BackingField: 25

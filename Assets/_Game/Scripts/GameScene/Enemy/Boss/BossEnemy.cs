@@ -9,7 +9,9 @@ public class BossEnemy : MonoBehaviour, IDamageable
     [SerializeField] private Projectile _specialProjectilePrefab;
     private float[] _positions = { -2.5f, 0f, 2.5f };
     private int _currentLine;
+    public int CurrentLine => _currentLine;
     private int _nextLine;
+    public int NextLine => _nextLine;
 
     [SerializeField] private EntityInfo _infoTemplate;
     public EntityInfo Info => _infoTemplate;
@@ -19,8 +21,11 @@ public class BossEnemy : MonoBehaviour, IDamageable
     private Health _health;
     private SpriteRenderer _renderer;
     private Player _player;
+    private EnemySpawner _spawner;
 
+    private Vector3 _spawnPosition = Vector3.zero;
     private Vector3 _targetPosition = Vector3.zero;
+    public Vector3 TargetPosition => _targetPosition;
     private float _moveSpeed;
     private float _shootInterval = 0.5f;
     private float _nextShootTime;
@@ -36,12 +41,25 @@ public class BossEnemy : MonoBehaviour, IDamageable
 
     [SerializeField] private float _specialAttackCooldown = 10f;
     private float _lastSpecialAttackTime;
+    private bool _isDead;
 
     private void Awake()
     {
         _health = GetComponent<Health>();
         _renderer = GetComponent<SpriteRenderer>();
         _player = FindObjectOfType<Player>();
+        _spawner = FindObjectOfType<EnemySpawner>();
+    }
+
+    private void Start()
+    {
+        for (int i = 0; i < _positions.Length; i++)
+        {
+            if (transform.position.x == _positions[i])
+            {
+                _nextLine = i;
+            }
+        }
     }
 
     private void OnEnable()
@@ -65,6 +83,17 @@ public class BossEnemy : MonoBehaviour, IDamageable
 
     private void Update()
     {
+        if (_isDead)
+        {
+            CancelInvoke();
+            if (_specialAttackCoroutine != null)
+            {
+                StopCoroutine(_specialAttackCoroutine);
+                _specialAttackCoroutine = null;
+            }
+            return;
+        }
+
         if (_isDescending)
         {
             Descend();
@@ -83,7 +112,7 @@ public class BossEnemy : MonoBehaviour, IDamageable
             {
                 StartSpecialAttack();
             }
-            else
+            else if (!_isMoving && !_isSpecialAttackActive && _currentLine == _player.CurrentLine)
             {
                 Shoot();
                 _nextShootTime = Time.time + Random.Range(0.5f, 1.5f);
@@ -111,21 +140,49 @@ public class BossEnemy : MonoBehaviour, IDamageable
 
     private void Descend()
     {
-        Vector3 currentPosition = transform.position;
-        Vector3 targetPosition = new(currentPosition.x, _targetYPosition, currentPosition.z);
-        transform.position = Vector3.Lerp(currentPosition, targetPosition, _descentSpeed * Time.deltaTime);
+        if (_spawnPosition == Vector3.zero)
+        {
+            for (int i = 0; i < _positions.Length; i++)
+            {
+                if (transform.position.x == _positions[i])
+                {
+                    _nextLine = i;
+                }
+            }
+        }
 
-        if (Mathf.Abs(transform.position.y - _targetYPosition) < 0.01f)
+        _spawnPosition = new(transform.position.x, _spawner.GetSpawnYPositionForLine(this, _nextLine), transform.position.z);
+        _targetPosition = _spawnPosition;
+        transform.position = Vector3.Lerp(transform.position, _spawnPosition, _descentSpeed * Time.deltaTime);
+        if (Mathf.Abs(transform.position.y - _spawnPosition.y) < 0.01f)
         {
             _isDescending = false;
+            _currentLine = _nextLine;
+            _nextLine = -1;
+            _targetPosition = Vector3.zero;
         }
     }
 
     private void SetNextTargetPosition()
     {
-        _nextLine = Random.Range(0, _positions.Length);
-        _targetPosition = new Vector3(_positions[_nextLine], transform.position.y, transform.position.z);
+        do
+        {
+            _nextLine = Random.Range(0, _positions.Length);
+        }
+        while (_spawner.GetEnemiesOnLine(_nextLine) > 2);
+        float yPos = 3;
+        if (_nextLine == _currentLine)
+        {
+            yPos = transform.position.y;
+        }
+        else
+        {
+            yPos = _spawner.GetSpawnYPositionForLine(this, _nextLine);
+        }
+        float nextPosition = _positions[_nextLine];
+        _targetPosition = new Vector3(nextPosition, yPos, transform.position.z);
         _isMoving = true;
+        _currentLine = -1;
     }
 
     private void Move()
@@ -133,11 +190,12 @@ public class BossEnemy : MonoBehaviour, IDamageable
         if (_isMoving)
         {
             transform.position = Vector3.MoveTowards(transform.position, _targetPosition, _moveSpeed * Time.deltaTime);
-
             if (Vector3.Distance(transform.position, _targetPosition) < 0.01f)
             {
                 _isMoving = false;
                 _currentLine = _nextLine;
+                _nextLine = -1;
+                Invoke(nameof(SetNextTargetPosition), Random.Range(1f, 3f));
             }
         }
     }
@@ -159,6 +217,7 @@ public class BossEnemy : MonoBehaviour, IDamageable
 
     private IEnumerator ExecuteSpecialAttack()
     {
+        CancelInvoke();
         while (_visitedLines.Count < _positions.Length)
         {
             do
@@ -167,14 +226,31 @@ public class BossEnemy : MonoBehaviour, IDamageable
             } while (_visitedLines.Contains(_nextLine));
 
             _visitedLines.Add(_nextLine);
-            _targetPosition = new Vector3(_positions[_nextLine], transform.position.y, transform.position.z);
+            float yPos = 3;
+            if (_nextLine == _currentLine)
+            {
+                yPos = transform.position.y;
+            }
+            else
+            {
+                yPos = _spawner.GetSpawnYPositionForLine(this, _nextLine);
+            }
+            _targetPosition = new Vector3(_positions[_nextLine], yPos, transform.position.z);
             _isMoving = true;
+            _currentLine = -1;
 
             while (_isMoving)
             {
+                if (_isDead)
+                {
+                    CancelInvoke();
+                    yield break;
+                }
+
                 yield return null;
             }
 
+            CancelInvoke();
             ShootSpecial();
             yield return new WaitForSeconds(0.5f);
         }
@@ -182,6 +258,7 @@ public class BossEnemy : MonoBehaviour, IDamageable
         _isSpecialAttackActive = false;
         _specialAttackCoroutine = null;
         _nextShootTime = Time.time + 2f;
+        Invoke(nameof(SetNextTargetPosition), Random.Range(1f, 3f));
     }
 
     private void ShootSpecial()
@@ -199,13 +276,39 @@ public class BossEnemy : MonoBehaviour, IDamageable
 
     public void OnDamage(float damage)
     {
-        _renderer.material.SetFloat("_DamageProgress", damage / _health.MaxHealth);
+        float healthRemaining = Mathf.Clamp(_health.CurrHealth / _health.MaxHealth, 0f, 1f);
+        float progress = Mathf.Lerp(0f, 0.4f, 1f - healthRemaining);
+        _renderer.material.SetFloat("_Progress", progress);
     }
 
     public void Death()
     {
+        _isDead = true;
         GameManager.Instance.Score += 100;
         GameEvents.OnBossEnemyKilledInvoke(this);
-        Destroy(gameObject);
+        StartCoroutine(LerpProgress());
+
+        Destroy(gameObject, 1);
+    }
+
+    private IEnumerator LerpProgress()
+    {
+        float duration = 1f;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < duration)
+        {
+            float progress = Mathf.Lerp(0.4f, 1, elapsedTime / duration);
+            _renderer.material.SetFloat("_Progress", progress);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        _renderer.material.SetFloat("_Progress", 1);
+    }
+
+    public bool IsDead()
+    {
+        return _isDead;
     }
 }

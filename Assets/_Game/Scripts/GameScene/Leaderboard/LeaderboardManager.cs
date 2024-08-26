@@ -13,70 +13,67 @@ public class LeaderboardManager : MonoBehaviour
     [SerializeField] private List<Item> items;
     public UnityEvent OnHighScoresGet;
 
-    private void Awake() {
-        foreach(var i in items) {
+    private void Awake() 
+    {
+        foreach (var i in items) 
+        {
             i.Name.text = "XXX";
             i.Score.text = "0";
         }
     }
 
-    private void Start() {
+    private void Start()
+    {
         GetHighScores();
     }
 
-    private string SetTimeText(int num) {
-        TimeSpan time = TimeSpan.FromSeconds(num);
-
-        string timeString = "";
-
-        if(time.Hours > 0) {
-            timeString += $"{time.Hours}h ";
-        }
-        if(time.Minutes > 0) {
-            timeString += $"{time.Minutes}m ";
-        }
-        if(time.Seconds > 0 || timeString == "") {
-            timeString += $"{time.Seconds}s";
-        }
-
-        return timeString.Trim();
+    private string SetTimeText(int num)
+    {
+        return num.ToString();
     }
 
-    private void OnEnable() {
+    private void OnEnable()
+    {
         StartCoroutine(UpdateLeaderboard());
     }
 
-    private void OnDisable() {
+    private void OnDisable()
+    {
         StopAllCoroutines();
     }
 
-    IEnumerator UpdateLeaderboard() {
-        while(true) { 
+    IEnumerator UpdateLeaderboard()
+    {
+        while (true)
+        { 
             yield return new WaitForSecondsRealtime(3);
             ShowLeaderboard();
             yield return new WaitForSecondsRealtime(2);
         }
     }
 
-    public void ShowLeaderboard() {
+    public void ShowLeaderboard()
+    {
         GetHighScores();
     }
 
-    public void GetHighScores() {
+    public void GetHighScores()
+    {
         LeaderboardCreator.GetLeaderboard(publicKey, OnGetHighScores);
     }
 
-    private void OnGetHighScores(Entry[] entries) {
+    private void OnGetHighScores(Entry[] entries)
+    {
         int i = 0;
-        foreach(var entry in entries) {
-            if(i == 10)
+        foreach (var entry in entries)
+        {
+            if (i == 10)
                 return;
             items[i].Name.text = entry.Username;
             items[i].Score.text = SetTimeText(entry.Score);
             i++;
         }
+
         OnHighScoresGet.Invoke();
     }
-
-
 }

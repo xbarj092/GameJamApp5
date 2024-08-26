@@ -1,9 +1,14 @@
 using System;
 using System.Collections;
+using TMPro;
 using UnityEngine;
 
 public class Player : MonoBehaviour, IDamageable
 {
+    [SerializeField] private TMP_Text _outOfAmmoText;
+    [SerializeField] private SpriteRenderer _renderer;
+    [SerializeField] private GameObject _shieldVisual;
+
     [SerializeField] private Projectile _projectilePrefab;
     [SerializeField] private Transform _shootTransform;
     [SerializeField] private EntityInfo _infoTemplate;
@@ -41,6 +46,8 @@ public class Player : MonoBehaviour, IDamageable
     public float BonusDamage;
 
     private bool _isMoving = false;
+
+    public PickupableItem CurrentPickupable;
 
     public event Action<float> OnHealthChanged;
     public event Action<bool> OnShieldStateChanged;
@@ -88,13 +95,35 @@ public class Player : MonoBehaviour, IDamageable
         {
             OnHealthChanged?.Invoke(_health.MaxHealth - damage);
         }
+
+        float healthRemaining = Mathf.Clamp(_health.CurrHealth / _health.MaxHealth, 0f, 1f);
+        float progress = Mathf.Lerp(0f, 0.4f, 1f - healthRemaining);
+        _renderer.material.SetFloat("_Progress", progress);
     }
 
     public void Death()
     {
         Time.timeScale = 0;
+        StartCoroutine(LerpProgress());
+
+        Destroy(gameObject, 1.5f);
+    }
+
+    private IEnumerator LerpProgress()
+    {
+        float duration = 1f;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < duration)
+        {
+            float progress = Mathf.Lerp(0.4f, 1, elapsedTime / duration);
+            _renderer.material.SetFloat("_Progress", progress);
+            elapsedTime += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        _renderer.material.SetFloat("_Progress", 1);
         ScreenEvents.OnGameScreenOpenedInvoke(GameScreenType.GameOver);
-        Destroy(gameObject);
     }
 
     private void Update()
@@ -135,6 +164,10 @@ public class Player : MonoBehaviour, IDamageable
                     _ammo--;
                     OnBulletsChanged?.Invoke(_ammo);
                 }
+                else if (_ammo <= 0)
+                {
+                    StartCoroutine(ShowText("Out of ammo!"));
+                }
 
                 return;
             }
@@ -143,6 +176,20 @@ public class Player : MonoBehaviour, IDamageable
         _isWaitingForInput = true;
         _timeSinceLastKeyPress = 0f;
         _lastKeyPressed = key;
+    }
+
+    private IEnumerator ShowText(string message)
+    {
+        _outOfAmmoText.gameObject.SetActive(true);
+        _outOfAmmoText.color = new Color(_outOfAmmoText.color.r, _outOfAmmoText.color.g, _outOfAmmoText.color.b, 1);
+        _outOfAmmoText.text = message;
+        yield return new WaitForSeconds(1f);
+        while (_outOfAmmoText.color.a > 0)
+        {
+            _outOfAmmoText.color = new Color(_outOfAmmoText.color.r, _outOfAmmoText.color.g, _outOfAmmoText.color.b, _outOfAmmoText.color.a - 0.005f);
+            yield return null;
+        }
+        _outOfAmmoText.gameObject.SetActive(false);
     }
 
     private void Shoot()
@@ -216,25 +263,47 @@ public class Player : MonoBehaviour, IDamageable
         if (_shield)
         {
             Shield = false;
+            _shieldVisual.SetActive(false);
+            _renderer.color = new(_renderer.color.r, _renderer.color.g, _renderer.color.b, 255f / 255f);
             AudioManager.Instance.Play(SoundType.ShieldBreak);
+            if (CurrentPickupable != null && CurrentPickupable.PickupableStrategy is ShieldPickup)
+            {
+                CurrentPickupable.Collect(this);
+            }
         }
         else
         {
             AudioManager.Instance.Play(SoundType.PlayerHitBullet);
             _health.DealDamage(damage);
+
+            if (CurrentPickupable != null && CurrentPickupable.PickupableStrategy is HpPickup)
+            {
+                CurrentPickupable.Collect(this);
+            }
         }
     }
 
     private IEnumerator Invincibility()
     {
         _invincible = true;
-        yield return new WaitForSeconds(1);
+        Color baseColor = _renderer.color;
+        Color disabledColor = new(_renderer.color.r, _renderer.color.g, _renderer.color.b, 0);
+        for (int i = 0; i < 5; i++)
+        {
+            _renderer.color = disabledColor;
+            yield return new WaitForSeconds(0.1f);
+            _renderer.color = baseColor;
+            yield return new WaitForSeconds(0.1f);
+        }
+
         _invincible = false;
     }
 
     public void IncreaseShield()
     {
         Shield = true;
+        _shieldVisual.SetActive(true);
+        _renderer.color = new(_renderer.color.r, _renderer.color.g, _renderer.color.b, 230f / 255f);
     }
 
     public void RestoreHealth(int amount)
@@ -246,5 +315,10 @@ public class Player : MonoBehaviour, IDamageable
     {
         _ammo += amount;
         OnBulletsChanged?.Invoke(_ammo);
+    }
+
+    public bool IsDead()
+    {
+        return false;
     }
 }

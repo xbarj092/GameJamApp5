@@ -460,8 +460,8 @@ MonoBehaviour:
   _spawnInterval: 2
   _obstaclePrefab: {fileID: -3605081684572173056, guid: a3245fcc0ab8b504da16cce509d300fd, type: 3}
   _spawnChance: 1
-  _shieldPickupPrefab: {fileID: -5723462149908570003, guid: d709d39a29369124f8972190e13aaf6e, type: 3}
-  _hpPickupPrefab: {fileID: 152485591476322978, guid: e32a173fc67cd8b45b630af51e64609f, type: 3}
+  _shieldPickupPrefab: {fileID: 8069497238217440898, guid: a69196ab15930a340a6b4bfcb3749be6, type: 3}
+  _hpPickupPrefab: {fileID: 8069497238217440898, guid: 98894fadd0c154e439278331cce48c2f, type: 3}
   _bulletPickupPrefab: {fileID: 8069497238217440898, guid: 28ff800e62a34f34bb8c931401808604, type: 3}
   _pickupSpawnChance: 0.6
   _spawnRateMultiplierThresholds:
@@ -475,7 +475,7 @@ Transform:
   m_GameObject: {fileID: 558503856}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 6, z: 0}
+  m_LocalPosition: {x: 0, y: 8, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

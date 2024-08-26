@@ -24,13 +24,13 @@ public class Projectile : MonoBehaviour
     {
         if (_holder != null)
         {
-            _rb.velocity = 2.5f * GameManager.Instance.MovementSpeed() * (_enemy ? -_holder.up : _holder.up);
+            _rb.velocity = _speed * 2.5f * GameManager.Instance.MovementSpeed() * (_enemy ? -_holder.up : _holder.up);
         }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (_holder != null && !_holder.CompareTag(collision.transform.tag) && collision.TryGetComponent(out IDamageable damageable))
+        if (_holder != null && _holder.TryGetComponent(out IDamageable holder) && !holder.IsDead() && !_holder.CompareTag(collision.transform.tag) && collision.TryGetComponent(out IDamageable damageable) && !damageable.IsDead())
         {
             damageable.Damage(_damage);
             _rb.velocity = Vector2.zero;

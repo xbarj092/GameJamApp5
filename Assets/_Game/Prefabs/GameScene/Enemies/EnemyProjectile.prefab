@@ -101,7 +101,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _rb: {fileID: 3280361040933118807}
-  _speed: 5
+  _speed: 1
   _renderer: {fileID: 3496414749026429218}
   _enemy: 1
 --- !u!50 &3280361040933118807

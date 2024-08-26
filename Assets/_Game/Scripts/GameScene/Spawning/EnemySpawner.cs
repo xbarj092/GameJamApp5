@@ -1,6 +1,7 @@
 using AYellowpaper.SerializedCollections;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
@@ -71,7 +72,7 @@ public class EnemySpawner : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(1f);
-            if (_lastBossKillTime + 10 <= GameManager.Instance.SecondsPassed && !_bossFightActive && _activeBoss == null)
+            if (_lastBossKillTime + 120 <= GameManager.Instance.SecondsPassed && !_bossFightActive && _activeBoss == null)
             {
                 _bossFightActive = true;
                 SpawnBossEnemy();
@@ -115,5 +116,52 @@ public class EnemySpawner : MonoBehaviour
         GameEvents.OnBossEnemyKilled -= HandleBossKilled;
         _activeBoss = null;
         _bossFightActive = false;
+    }
+
+    public float GetSpawnYPositionForLine(IDamageable entity, int lineIndex, float defaultYPosition = 3f, float spacing = 1f)
+    {
+        GameObject entityGameObject = ((MonoBehaviour)entity)?.gameObject;
+        List<float> enemiesOnLine = _activeEnemies.Where(enemy => enemy.gameObject != entityGameObject && enemy.CurrentLine == lineIndex).Select(enemy => enemy.transform.position.y).ToList();
+        enemiesOnLine.AddRange(_activeEnemies.Where(enemy => enemy.gameObject != entityGameObject && enemy.NextLine == lineIndex).Select(enemy => enemy.TargetPosition.y));
+
+        if (_activeBoss != null && _activeBoss.gameObject != entityGameObject)
+        {
+            if (_activeBoss.CurrentLine == lineIndex)
+            {
+                enemiesOnLine.Add(_activeBoss.transform.position.y);
+            }
+            else if (_activeBoss.NextLine == lineIndex)
+            {
+                enemiesOnLine.Add(_activeBoss.TargetPosition.y);
+            }
+        }
+
+        enemiesOnLine.Sort();
+        float spawnY = defaultYPosition;
+
+        for (int i = 0; i < enemiesOnLine.Count; i++)
+        {
+            if (Mathf.Approximately(spawnY, enemiesOnLine[i]))
+            {
+                spawnY += spacing;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        return spawnY;
+    }
+
+    public int GetEnemiesOnLine(int lineIndex)
+    {
+        int enemiesOnLine = _activeEnemies.Where(enemy => enemy.CurrentLine == lineIndex || enemy.NextLine == lineIndex).Count();
+        if (_activeBoss != null && (_activeBoss.CurrentLine == lineIndex || _activeBoss.NextLine == lineIndex))
+        {
+            enemiesOnLine++;
+        }
+
+        return enemiesOnLine;
     }
 }
