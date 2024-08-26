@@ -6,6 +6,14 @@ public class KeyboardInputHandler : IInteractionHandler
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
+            Player player = GameObject.FindObjectOfType<Player>();
+            if (ScreenManager.Instance.ActiveGameScreen != null &&
+                ScreenManager.Instance.ActiveGameScreen.GameScreenType == GameScreenType.GameOver ||
+                (player != null && player.IsDead()))
+            {
+                return;
+            }
+
             if (ScreenManager.Instance.ActiveGameScreen != null &&
                 ScreenManager.Instance.ActiveGameScreen.GameScreenType == GameScreenType.Pause)
             {
