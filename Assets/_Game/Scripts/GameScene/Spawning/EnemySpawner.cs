@@ -72,7 +72,7 @@ public class EnemySpawner : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(1f);
-            if (_lastBossKillTime + 120 <= GameManager.Instance.SecondsPassed && !_bossFightActive && _activeBoss == null)
+            if (_lastBossKillTime + 60 <= GameManager.Instance.SecondsPassed && !_bossFightActive && _activeBoss == null)
             {
                 _bossFightActive = true;
                 SpawnBossEnemy();

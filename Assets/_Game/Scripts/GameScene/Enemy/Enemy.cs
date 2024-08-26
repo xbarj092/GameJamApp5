@@ -35,6 +35,8 @@ public class Enemy : MonoBehaviour, IDamageable
     private float _descentSpeed = 2f;
     private bool _isDead;
 
+    private Coroutine _shootCoroutine;
+
     private void Awake()
     {
         _health = GetComponent<Health>();
@@ -89,7 +91,7 @@ public class Enemy : MonoBehaviour, IDamageable
 
         if (Time.time >= _nextShootTime && _currentLine == _player.CurrentLine)
         {
-            Shoot();
+            _shootCoroutine = StartCoroutine(Shoot());
             _nextShootTime = Time.time + UnityEngine.Random.Range(0.5f, 1.5f);
         }
     }
@@ -145,6 +147,12 @@ public class Enemy : MonoBehaviour, IDamageable
     {
         if (_isMoving)
         {
+            if (_shootCoroutine != null)
+            {
+                StopCoroutine(_shootCoroutine);
+                _shootCoroutine = null;
+            }
+
             transform.position = Vector3.MoveTowards(transform.position, _targetPosition, _moveSpeed * Time.deltaTime);
             if (Vector3.Distance(transform.position, _targetPosition) < 0.01f)
             {
@@ -156,8 +164,9 @@ public class Enemy : MonoBehaviour, IDamageable
         }
     }
 
-    public void Shoot()
+    public IEnumerator Shoot()
     {
+        yield return new WaitForSeconds(0.3f);
         Projectile projectile = Instantiate(_projectilePrefab, _shootTransform.position, Quaternion.identity);
         projectile.Init(transform, _infoTemplate.Damage);
         AudioManager.Instance.Play(SoundType.EnemyShoot);
