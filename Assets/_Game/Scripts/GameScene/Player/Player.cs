@@ -103,6 +103,12 @@ public class Player : MonoBehaviour, IDamageable
 
     public void Death()
     {
+        if (_shield)
+        {
+            Shield = false;
+            _shieldVisual.SetActive(false);
+        }
+
         Time.timeScale = 0;
         StartCoroutine(LerpProgress());
 
